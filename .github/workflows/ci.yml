@@ -34,7 +34,7 @@ jobs:
       - name: Copy custom plan file
         shell: bash
         run: |
-          cp sonet/private-build-plans.toml iosevka/private-build-plans.toml
+          cp sonet/private-build-plans.toml iosevka
 
       - name: Build Font Sonet
         shell: bash
