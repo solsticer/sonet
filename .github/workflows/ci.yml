@@ -1,0 +1,50 @@
+name: ci
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    name: Build Sonet font
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout my repo
+        uses: actions/checkout@v5
+        with:
+          path: sonet
+
+      - name: Checkout Iosevka repo
+        uses: actions/checkout@v5
+        with:
+          repository: be5invis/Iosevka
+          path: iosevka
+          fetch-depth: 1
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      - name: Install ttfautohint
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ttfautohint
+
+      - name: Copy custom plan file
+        shell: bash
+        run: |
+          cp sonet/private-build-plans.toml iosevka/private-build-plans.toml
+
+      - name: Build Font Sonet
+        shell: bash
+        working-directory: iosevka
+        run: |
+          npm install
+          npm run build -- ttf::Sonet
+
+      - name: Upload compiled fonts
+        uses: actions/upload-artifact@v3
+        with:
+          name: sonet
+          path: iosevka/dist/*/
